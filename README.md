@@ -8,6 +8,14 @@
 
 [![首页截图（NASA 星云背景）](docs/images/screenshot-home.png)](https://nav.soso.sryze.cc)
 
+后台 · 背景设置（四种模式切换、每日图一键存图库）：
+
+![后台背景设置](docs/images/screenshot-background.png)
+
+后台 · 图库管理（拖拽上传、直链/Markdown 复制、API 密钥调用）：
+
+![后台图库管理](docs/images/screenshot-gallery.png)
+
 ## 文档
 
 | 文档 | 内容 |
