@@ -1,6 +1,6 @@
 # Nav-Item Workers 版
 
-把 [eooce/Nav-Item](https://github.com/eooce/Nav-Item)（Vue 3 + Express + SQLite 的个人导航站）移植到 **Cloudflare Workers** 的版本：单个 Worker 同时托管前端静态资源、`/api/*` 接口与图片文件，数据存 D1，图片存 R2（**可选，没有 R2 也能部署运行**）。不需要服务器、不需要单独部署后端，Cloudflare 免费额度内即可运行。
+本项目是在Nav-Item基础上二次开发的 Cloudflare Workers 的版本，个人导航站：单个 Worker 同时托管前端静态资源、/api/* 接口与图片文件，数据存 D1，图片存 R2（可选，没有 R2 也能部署运行）。不需要服务器、不需要单独部署后端，Cloudflare 免费额度内即可运行。
 
 接口路径与返回格式与原版保持一致，前端源码基本未改，后台管理功能完整保留，并在此基础上增加了背景自动轮换、图库管理等功能。
 
