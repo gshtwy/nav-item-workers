@@ -6,6 +6,8 @@
 
 **在线演示**：https://nav.soso.sryze.cc （移植者的测试站，可直接打开看首页与背景轮换效果；后台为演示站自用，访客请自行部署后体验）
 
+[![首页截图（NASA 星云背景）](docs/images/screenshot-home.png)](https://nav.soso.sryze.cc)
+
 ## 文档
 
 | 文档 | 内容 |
