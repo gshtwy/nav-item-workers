@@ -1,0 +1,27 @@
+# Nav-Item Workers 版配置模板 —— 部署前把下面两处占位符换成你自己的
+name = "nav-item-workers"
+main = "src/index.js"
+compatibility_date = "2025-06-01"
+
+# 前端静态资源：web/dist 由 web/ 下 npm run build 生成
+[assets]
+directory = "./web/dist"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+run_worker_first = ["/api/*", "/uploads/*"]
+
+[vars]
+ADMIN_USERNAME = "admin"
+# ADMIN_PASSWORD、JWT_SECRET、IMG_API_KEY、NASA_API_KEY 等机密不要写进本文件，
+# 用 wrangler secret put 设置（用途与是否必需见 docs/配置参数.md）
+
+[[d1_databases]]
+binding = "DB"
+database_name = "nav-item-workers-db"
+database_id = "YOUR_D1_DATABASE_ID"
+
+# R2 图片存储（可选）：没有 R2 也能部署运行，仅后台图片上传不可用（图标可直接填外链地址）。
+# 开通了 R2 时，取消下面三行注释并把桶名换成你自己的：
+# [[r2_buckets]]
+# binding = "BUCKET"
+# bucket_name = "nav-item-workers-uploads"

@@ -1,0 +1,1 @@
+{"description":"eooce/Nav-Item 的 Cloudflare Workers 移植版（D1 + R2 + 静态资源单 Worker）","devDependencies":{"wrangler":"^4.0.0"},"name":"nav-item-workers","private":true,"scripts":{"build:web":"cd web && npm install && npm run build","deploy":"wrangler deploy","dev":"npm run build:web && wrangler dev"},"type":"module","version":"1.0.0"}
