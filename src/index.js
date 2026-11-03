@@ -8,9 +8,9 @@
 //   5. 上传接口补了登录鉴权：原版 upload 路由漏挂 auth（任何人可传图），前端本来就带 token，加上不影响使用
 import { SEED } from './seed.js';
 
-const VERSION = '1.3.10-workers';
+const VERSION = '1.3.11-workers';
 
-// 页脚版权默认值（后台「版权所有」栏可改，存 D1 settings 表）
+// 页脚版权默认值（后台「版权所有」栏可改，存 D1 settings 表；与 2026-11-01 用户定稿一致）
 const COPYRIGHT_DEFAULTS = {
   year: '2026',
   name: '天诚导航网站',
@@ -387,27 +387,39 @@ async function fetchBingArchive(idx, mkt) {
     return im && im.url ? im : null;
   } catch (e) { return null; }
 }
-async function fetchBingSlot() {
-  const block = bjNow().block;
+// 某一天的排片（base=归档 idx 平移：0 今天、1 昨天）：锚=该日中国版，其余按市场优先序去重凑 3 张补位。
+// excludeKeys 里的图名直接跳过（v1.3.11：今日补位排除昨日四段用过的图，免得全球同图日翻出昨天刚放过的图充数）。
+async function bingDayPlan(base, excludeKeys) {
   const keyOf = (rel) => { const m = /OHR\.([A-Za-z0-9]+)_/.exec(rel); return m ? m[1] : rel; };
-  // 今日中国版固定放在 6–12 点段（用户 2026-11-02 定）：先单独取它作锚，其余图按原优先序去重凑齐填 0/12/18 段
-  const anchorIm = await fetchBingArchive(0, 'zh-CN');
+  const anchorIm = await fetchBingArchive(base, 'zh-CN');
   const anchor = anchorIm ? { key: keyOf(anchorIm.url), rel: anchorIm.url, title: anchorIm.title || anchorIm.copyright || '' } : null;
   const pool = [];
-  for (let idx = 0; idx <= 6 && pool.length < 3; idx++) {
+  for (let idx = base; idx <= 7 && pool.length < 3; idx++) {
     for (const mkt of BING_MARKETS) {
       if (pool.length >= 3) break;
       const im = await fetchBingArchive(idx, mkt);
       if (!im) continue;
       const k = keyOf(im.url);
       if (anchor && k === anchor.key) continue;
+      if (excludeKeys && excludeKeys.has(k)) continue;
       const ex = pool.find((e) => e.key === k);
       if (ex) { if (mkt === 'zh-CN' && im.title) ex.title = im.title; continue; }
       pool.push({ key: k, rel: im.url, title: im.title || im.copyright || '' });
     }
   }
+  return { anchor, pool };
+}
+async function fetchBingSlot() {
+  const block = bjNow().block;
+  // 先按同一算法算昨天的排片（无状态、确定性），拿到昨天四段用过的图名作排除集
+  const yday = await bingDayPlan(1, null);
+  const usedYesterday = new Set();
+  if (yday.anchor) usedYesterday.add(yday.anchor.key);
+  for (const e of yday.pool) usedYesterday.add(e.key);
+  const { anchor, pool } = await bingDayPlan(0, usedYesterday);
   let slot = null;
   if (anchor) {
+    // 今日中国版固定放在 6–12 点段（用户 2026-11-02 定），其余三段由补位池依次填
     if (block === 1) slot = anchor;
     else if (block === 0) slot = pool[0];
     else slot = pool[block - 1];
